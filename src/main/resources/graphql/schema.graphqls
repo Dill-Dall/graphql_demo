@@ -1,0 +1,32 @@
+type Query {
+    bookById(id: ID): Book
+    todos: [TodoItem]
+    todoById(id: ID): TodoItem
+}
+
+type Mutation {
+    addTodoItem(name: String, description: String): TodoItem
+    updateTodoItem(id: ID, name: String, description: String, completed: Boolean): TodoItem
+    deleteTodoItem(id: ID): Boolean
+}
+
+type Book {
+    id: ID
+    name: String
+    pageCount: Int
+    author: Author
+}
+
+type Author {
+    id: ID
+    firstName: String
+    lastName: String
+    country: String
+}
+
+type TodoItem {
+    id: ID
+    name: String
+    description: String
+    completed: Boolean
+}
