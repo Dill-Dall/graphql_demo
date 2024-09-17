@@ -16,7 +16,12 @@ import org.springframework.security.web.SecurityFilterChain
 
 @Configuration
 @EnableWebSecurity
-class SecurityConfig {
+class SecurityConfig(
+    @Value("\${app.security.user.username}") private val userUsername: String,
+    @Value("\${app.security.user.password}") private val userPassword: String,
+    @Value("\${app.security.admin.username}") private val adminUsername: String,
+    @Value("\${app.security.admin.password}") private val adminPassword: String
+) {
 
     @Bean
     @Throws(Exception::class)
@@ -28,40 +33,29 @@ class SecurityConfig {
                     .requestMatchers("/graphiql", "/graphql").authenticated()
                     .anyRequest().permitAll()
             }
-            .httpBasic { httpBasicCustomizer -> httpBasicCustomizer }
+            .httpBasic { }
         return http.build()
     }
-
-    @Bean
-    fun passwordEncoder(): PasswordEncoder {
-        return BCryptPasswordEncoder()
-    }
-}
-
-
-@Configuration
-class InMemoryUserDetailsService(
-    private val passwordEncoder: PasswordEncoder,
-    @Value("\${app.security.user.username}") private val userUsername: String,
-    @Value("\${app.security.user.password}") private val userPassword: String,
-    @Value("\${app.security.admin.username}") private val adminUsername: String,
-    @Value("\${app.security.admin.password}") private val adminPassword: String
-) {
 
     @Bean
     fun userDetailsService(): UserDetailsService {
         val user = User.builder()
             .username(userUsername)
-            .password(passwordEncoder.encode(userPassword))
+            .password(passwordEncoder().encode(userPassword))
             .roles("USER")
             .build()
 
         val admin = User.builder()
             .username(adminUsername)
-            .password(passwordEncoder.encode(adminPassword))
+            .password(passwordEncoder().encode(adminPassword))
             .roles("ADMIN")
             .build()
 
         return InMemoryUserDetailsManager(user, admin)
+    }
+
+    @Bean
+    fun passwordEncoder(): PasswordEncoder {
+        return BCryptPasswordEncoder()
     }
 }
