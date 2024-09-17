@@ -1,5 +1,5 @@
-
-
+## Made with Spring Boot and GraphQL initializr
+Followed tutorial: https://spring.io/guides/gs/graphql-server
 
 ## Connect to local h2 database - with these properties
 ```
